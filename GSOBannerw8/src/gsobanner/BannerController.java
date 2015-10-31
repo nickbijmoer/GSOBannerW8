@@ -5,67 +5,62 @@
  */
 package gsobanner;
 
-import java.rmi.NotBoundException;
+import java.beans.PropertyChangeEvent;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
-import javax.annotation.Resource;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
- * @author Bart Memelink
+ * @author Sam
  */
-public class BannerController {
-    private AEXBanner banner;
-    private IEffectenbeurs effectenbeurs;
-    private Timer pollingTimer;
-    public Registry registry = null;
-    public String bindingName = "AEX";
-    private List<IFonds> fondslist;
-    private RMIClient RMIC;
+public class BannerController implements RemotePropertyListener {
 
+    private final IEffectenbeurs effectenBeurs;
+    public AEXBanner AEXbanner;
+    private final RMIClient rmiClient;
+    private String ipAddress;
+    private int portNumber;
 
-    public BannerController(AEXBanner banner) throws RemoteException {
-        this.RMIC = new RMIClient("127.0.0.1", 1099);
+    public BannerController(AEXBanner banner) {
+        askForData();
+        rmiClient = new RMIClient(ipAddress, portNumber);
+        effectenBeurs = rmiClient.setUp();
+        try {
+            UnicastRemoteObject.exportObject(this, portNumber + 1);
+            effectenBeurs.addListener(this, null);
+        } catch (RemoteException ex) {
+            Logger.getLogger(BannerController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-        this.banner = banner;
-        this.effectenbeurs = new MockEffectenbeurs();
-        
-        // Start polling timer: update banner every two seconds
-        pollingTimer = new Timer();
-        pollingTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-
-                String s = "";
-                for (IFonds eb : RMIC.GetKoersen()) {
-                    s = s + " " + eb.getName() + " " + eb.getKoers();
-                }
-                final String fs = s;
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        banner.setKoersen(fs);
-                    }
-                });
-
-            }
-        }, 0, 1500);
+        this.AEXbanner = banner;
+        if (AEXbanner == null) {
+            System.out.println("AEXBANNER ISNULL");
+        }
+        try {
+            AEXbanner.setAmountOfElements(effectenBeurs.getKoersen().size());
+        } catch (RemoteException ex) {
+        }
     }
 
-    // Stop banner controller
-    public void stop() {
-        pollingTimer.cancel();
-        // Stop simulation timer of effectenbeurs
-        // TODO
-        ((MockEffectenbeurs) effectenbeurs).StopTimer();
-    }
-    
-  
-    
+    public void askForData() {
+        // Welcome message
+        System.out.println("CLIENT USING REGISTRY");
 
+        // Get ip address of server
+        Scanner input = new Scanner(System.in);
+        System.out.print("Client: Enter IP address of server: ");
+        ipAddress = input.nextLine();
+
+        // Get port number
+        System.out.print("Client: Enter port number: ");
+        portNumber = input.nextInt();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) throws RemoteException {
+        AEXbanner.addFond((Fond) evt.getNewValue());
+    }
 }

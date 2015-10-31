@@ -3,7 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/nickbijmoer/NetBeansProjects/GSOBanner/src/gsobanner/GSOBanner.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/Fond.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/RemotePropertyListener.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/MockEffectenbeurs.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/AEXBanner.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/IEffectenbeurs.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/IFonds.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/RemotePublisher.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/RMIClient.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/BannerController.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/RMIServer.java</file>
+            <file>file:/Users/nickbijmoer/Documents/GSOBannerW8/GSOBannerw8/src/gsobanner/BasicPublisher.java</file>
         </group>
     </open-files>
 </project-private>

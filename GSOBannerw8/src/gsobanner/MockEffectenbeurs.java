@@ -7,60 +7,73 @@ package gsobanner;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.DecimalFormat;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  *
  * @author Bart Memelink
  */
-public class MockEffectenbeurs extends UnicastRemoteObject implements IEffectenbeurs{
+public class MockEffectenbeurs extends UnicastRemoteObject implements IEffectenbeurs, RemotePublisher{
 
-    private List<IFonds> fonds = new ArrayList<>();
-    private Timer timer;
-    private Random random;
-    
-    public MockEffectenbeurs() throws RemoteException
-    {
-        ArrayList<IFonds> temps = new ArrayList<IFonds>();
-        temps.add(new Fond("Nick", 3));
-        temps.add(new Fond("Bart", 7.1));
-        temps.add(new Fond("Bananen", 2));
-        temps.add(new Fond("Incredible Gentlemen", 2));
-        temps.add(new Fond("Skype", 2));
-        temps.add(new Fond("Steam", 2));
-        temps.add(new Fond("Netbeans", 2));
+    public ArrayList<Fond> fondsList;
+    private transient Timer fondsTimer;
+    private BasicPublisher basicPublisher;
 
+    public MockEffectenbeurs() throws RemoteException {
+        fondsList = new ArrayList<>();
 
-        this.fonds = temps;
-        this.timer = new Timer();
-        this.random = new Random();
-        StartTimer();
+        fondsList.add(new Fond("Nick", 300.0));
+        fondsList.add(new Fond("Turtle", 400.0));
+        fondsList.add(new Fond("Bart", 200.0));
+        fondsList.add(new Fond("Skype", 150.0));
+
+        basicPublisher = new BasicPublisher(new String[]{"koers"});
+
+        fondsTimer = new Timer();
+        fondsTimer.scheduleAtFixedRate(new fondsCalculator(), 0, 500);
+
     }
-    
+
+    public void addListener(RemotePropertyListener listener, String property) throws RemoteException {
+        basicPublisher.addListener(listener, null);
+    }
+
+    public void removeListener(RemotePropertyListener listener, String property) throws RemoteException {
+        basicPublisher.removeListener(listener, null);
+    }
+
     @Override
-    public List<IFonds> getKoersen() throws RemoteException {
-        return fonds;
+    public ArrayList<Fond> getKoersen() throws RemoteException {
+        return fondsList;
     }
-    
-    private void StartTimer()
-    {
-        this.timer.schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                 for(IFonds f : fonds)
-                   ((Fond) f).setKoers(random.nextInt(99 - 1) /100 + random.nextInt(99 -1));
+ 
+
+    class fondsCalculator extends TimerTask {
+
+        @Override
+        public void run() {
+            Random randomizer = new Random();
+
+            for (Fond fonds : fondsList) {
+                int randomInt = randomizer.nextInt(1000);
+                double randomDouble = randomizer.nextDouble();
+
+                randomDouble = (double) Math.round(randomDouble * 10) / 10;
+
+                fonds.setKoers(randomInt + randomDouble);
+                fonds.setName(randomInt + "");
+
+                informListener(fonds);
+
             }
-        }, 0, 8000);
+        }
     }
     
-    public void StopTimer()
-    {
-        this.timer.cancel();
+    public void informListener(Fond fonds) {
+        System.out.println("INFORMING");
+        basicPublisher.inform(this, null, null, fonds);
     }
-    
 }

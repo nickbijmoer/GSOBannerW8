@@ -7,13 +7,21 @@ package gsobanner;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  * @author Bart Memelink
  */
-public interface IEffectenbeurs extends Remote{
+public interface IEffectenbeurs extends Remote, RemotePublisher{
     
-    public List<IFonds> getKoersen() throws RemoteException;
+    ArrayList<Fond> getKoersen() throws RemoteException;
+    
+     @Override
+    void addListener(RemotePropertyListener listener, String property)
+            throws RemoteException;
+    @Override
+    void removeListener(RemotePropertyListener listener, String property)
+            throws RemoteException;
 }

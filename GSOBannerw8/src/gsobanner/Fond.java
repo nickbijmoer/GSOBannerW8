@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @author Bart Memelink
  */
-public class Fond implements IFonds {
+public class Fond implements IFonds,Serializable {
 
     private String name;
     private double koers;
@@ -26,6 +26,10 @@ public class Fond implements IFonds {
     public String getName() {
         return name;
     }
+    
+     public void setName(String name){
+        name = name;
+    }
 
     @Override
     public double getKoers() {
@@ -36,6 +40,11 @@ public class Fond implements IFonds {
     {
 
         this.koers = Koers;
+    }
+     
+    @Override
+    public String toString(){
+        return name + ": " + koers;
     }
     
 }

@@ -1,35 +1,38 @@
-package gsobanner;
-
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package gsobanner;
 
-import gsobanner.IEffectenbeurs;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.List;
-import java.util.Scanner;
 
 /**
- * 
  *
- * @author Mick Wonnink
+ * @author Nick
  */
 public class RMIClient {
 
     // Set binding name for student administration
-    private static final String bindingName = "AEX";
+    private static final String bindingName = "mockEffectenBeurs";
 
     // References to registry and student administration
     private Registry registry = null;
-    private IEffectenbeurs effectBeurs = null;
+    private IEffectenbeurs effectebeurs = null;
+
+    private String ipAddress;
+    private int portNumber;
 
     // Constructor
     public RMIClient(String ipAddress, int portNumber) {
+        this.ipAddress = ipAddress;
+        this.portNumber = portNumber;
+    }
 
+    public IEffectenbeurs setUp() {
         // Print IP address and port number for registry
         System.out.println("Client: IP Address: " + ipAddress);
         System.out.println("Client: Port number " + portNumber);
@@ -51,66 +54,33 @@ public class RMIClient {
             System.out.println("Client: Registry is null pointer");
         }
 
-
         // Bind student administration using registry
         if (registry != null) {
             try {
-                effectBeurs = (IEffectenbeurs) registry.lookup(bindingName);
+                effectebeurs = (IEffectenbeurs) registry.lookup(bindingName);
             } catch (RemoteException ex) {
-                System.out.println("Client: Cannot bind effecten beurs");
+                System.out.println("Client: Cannot bind effectenbeurs");
                 System.out.println("Client: RemoteException: " + ex.getMessage());
-                effectBeurs = null;
+                effectebeurs = null;
             } catch (NotBoundException ex) {
-                System.out.println("Client: Cannot bind effecten beurs");
+                System.out.println("Client: Cannot bind effectenbeurs");
                 System.out.println("Client: NotBoundException: " + ex.getMessage());
-                effectBeurs = null;
+                effectebeurs = null;
             }
         }
 
         // Print result binding student administration
-        if (effectBeurs != null) {
-            System.out.println("Client: Effecten beurs bound");
+        if (effectebeurs != null) {
+            System.out.println("Client: Effectenbeurs bound");
         } else {
-            System.out.println("Client: Effecten beurs is null pointer");
+            System.out.println("Client: Effectenbeurs is null pointer");
         }
 
         // Test RMI connection
-        if (effectBeurs != null) {
-            testEffectenBeurs();
+        if (effectebeurs != null) {
+            return effectebeurs;
+        } else {
+            return null;
         }
     }
-    
-    public List<IFonds> GetKoersen(){
-        try {
-        return effectBeurs.getKoersen();
-        }
-        catch (RemoteException e){
-        }
-        return null;
-    }
-
-
-    // Test RMI connection
-    public void testEffectenBeurs() {
-        
-        //Get amount of fonds
-        try {
-            List<IFonds> koersen = effectBeurs.getKoersen();
-            System.out.println("Client: Number of fonds: " + koersen.size());
-        } catch (RemoteException ex) {
-            System.out.println("Client: Cannot get number of fonds");
-            System.out.println("Client: RemoteException: " + ex.getMessage());
-        }
-        
-        //Get first fonds' name
-                try {
-            List<IFonds> koersen = effectBeurs.getKoersen();
-            System.out.println("Client: Name of first fonds: " + koersen.get(0).getName());
-        } catch (RemoteException ex) {
-            System.out.println("Client: Cannot get first fonds' name");
-            System.out.println("Client: RemoteException: " + ex.getMessage());
-        }
-
-    }
-   
 }
